@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/4/trunk/app/views/users
+END
+new.html.erb
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/4/trunk/app/views/users/new.html.erb
+END

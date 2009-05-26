@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/4/trunk/app/flex/com/xbox/components
+END
+SplashBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/7/trunk/app/flex/com/xbox/components/SplashBox.mxml
+END
+ProjectCreateBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/4/trunk/app/flex/com/xbox/components/ProjectCreateBox.mxml
+END
+LocationCreateBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/4/trunk/app/flex/com/xbox/components/LocationCreateBox.mxml
+END
+DebugPanel.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/4/trunk/app/flex/com/xbox/components/DebugPanel.mxml
+END
+AccountCreateBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/7/trunk/app/flex/com/xbox/components/AccountCreateBox.mxml
+END
+MessagesListBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/14/trunk/app/flex/com/xbox/components/MessagesListBox.mxml
+END
+MainBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/14/trunk/app/flex/com/xbox/components/MainBox.mxml
+END
+GameThumbnail.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/14/trunk/app/flex/com/xbox/components/GameThumbnail.mxml
+END
+TaskCreateBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/4/trunk/app/flex/com/xbox/components/TaskCreateBox.mxml
+END
+LoginBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/7/trunk/app/flex/com/xbox/components/LoginBox.mxml
+END
+GamesListBox.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/14/trunk/app/flex/com/xbox/components/GamesListBox.mxml
+END

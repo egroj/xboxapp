@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%" height="100%" label="Juegos" addedToStage="getUserGamesService.send()">
+	
+	<mx:Script>
+    <![CDATA[
+    	import mx.automation.delegates.controls.ListAutomationImpl;
+    	import mx.collections.ArrayCollection;
+    	import mx.binding.utils.BindingUtils;
+    	import mx.core.Container;
+    	import mx.events.DragEvent;
+    	import mx.events.DropdownEvent;
+    	import mx.events.ItemClickEvent;
+    	import mx.managers.DragManager;
+        import mx.core.DragSource;
+        import mx.rpc.events.ResultEvent;
+        import mx.controls.Alert;
+        
+        private function handleGameCreateResult(event:ResultEvent):void {
+        	Alert.show("Juego añadido correctamente");
+        	gameListService.send();
+        }
+
+		private function addGame():void {
+				addGameService.send();
+		}
+		
+		[Bindable]private var gameName:String;
+		[Bindable]private var gameImage:String;
+
+        private function nuevoJuegoEnColeccion(event:DragEvent):void {
+        	var index:int = listaJuegos.selectedIndex;
+            if(index==-1){
+//            	Alert.show("Entro en añadir y no hago nada");
+            }else{
+            	var juegoSeleccionado:GameThumbnail = listaJuegos.indexToItemRenderer(index) as GameThumbnail;
+            	gameName = juegoSeleccionado.texto.text;
+//            	gameImage = juegoSeleccionado.imagen.source as String;
+				addGameToUserService.send();
+//				Alert.show("Entro en añadir " + juegoSeleccionado.texto.text + " " + gameImage);
+            }
+              
+        }
+            
+        private function eliminarJuegoEnColeccion(event:DragEvent):void {
+            var index:int = juegosNuevosColeccion.selectedIndex;
+           	if(index==-1){
+//           		Alert.show("Entro en eliminar y no hago nada");
+           	}else{
+           		var juegoSeleccionado:GameThumbnail = juegosNuevosColeccion.indexToItemRenderer(index) as GameThumbnail;
+           		gameName = juegoSeleccionado.texto.text;
+//            	gameImage = juegoSeleccionado.imagen.source as String;
+				deleteGameToUserService.send();
+//           	Alert.show("Entro en eliminar con " + index.toString() + " " + juegoSeleccionado.texto.text);
+					
+           	}             
+        }
+       
+        private function addGameToUser():void{
+        	if(user.id != null && gameName != null && gameImage != null){
+        		addGameToUserService.send();
+        		Alert.show("Llamada realizada");
+        	}else{
+        		Alert.show("Error al añadir el juego", "Error");
+        	}
+       	
+       	
+        }
+        
+        private function addGameToUserHandle(event:ResultEvent):void{
+        	var result:Object = event.result;
+        	if(result == "error"){
+        		getUserGamesService.send();
+        		Alert.show("¿Cuántas veces te has comprado ese juego, gañanazo?", "Error");
+        	}
+        }
+        
+        private function deleteGameToUserHandle(event:ResultEvent):void{
+        	var result:Object = event.result;
+        	if(result == "error"){
+        		getUserGamesService.send();
+        		Alert.show("Error al eliminar el juego", "Error");
+        	}if(result == "ok"){
+//        		Alert.show("Ok", "Ok");
+        		gameListService.send();
+        	}
+        }
+        
+        private function handlerFiltrarUsuario(event:ResultEvent):void{
+        	var listaUsuarios:ArrayCollection = usersGrid.dataProvider as ArrayCollection;
+        	listaUsuarios.filterFunction = filtroDeUsuario;
+        	listaUsuarios.refresh();
+        }
+        
+        private function filtroDeUsuario(usuario:Object):Boolean{
+        	return (usuario.login.toString() != user.login.toString());        	
+        }
+        
+        private function handlerJuegoSeleccionado():void{
+        	juegoSeleccionado=projectsGrid.selectedItem.name;
+        	getPlayersService.send();
+        }
+
+       
+        [Bindable]public var user : XML;
+        [Bindable]public var juegoSeleccionado :String;
+        [Bindable]public var usuarioSeleccionado :String;
+        [Bindable]public var hayJugadorSeleccionado:Boolean = false;
+                    
+		
+	]]>
+    </mx:Script>
+    
+    <mx:HTTPService id="gameListService"
+	url="http://localhost:3000/Games/list"/>
+	
+	<mx:HTTPService
+		id="addGameService"
+		url="/games.xml"
+		resultFormat="e4x"
+		contentType="application/xml"
+		method="POST"
+		result="handleGameCreateResult(event)">
+		<mx:request>
+			<game>
+				<name>{nameTI.text}</name>
+				<image>{imageTI.text}</image>
+			</game>
+		</mx:request>
+	</mx:HTTPService>
+	
+	<mx:HTTPService id="getUserGamesService"
+		url='http://localhost:3000/games/getUserGames/{user.id}.xml'/>
+		
+	<mx:HTTPService id="getPlayersService"
+		url='http://localhost:3000/games/getPlayers/{juegoSeleccionado}.xml'
+		result="handlerFiltrarUsuario(event)"/>
+		
+		
+	<mx:HTTPService
+		id="addGameToUserService"
+		url="http://localhost:3000/games/addGameToUser"
+		method="POST"
+		contentType="application/xml"
+		result="addGameToUserHandle(event)"
+		resultFormat="e4x">
+		<mx:request>
+		<game>
+			<name>{gameName.toString()}</name>
+			<!--<image>{gameImage.toString()}</image>-->
+			<userid>{user.id.toString()}</userid>
+		</game>
+		</mx:request>
+	</mx:HTTPService>
+	
+	<mx:HTTPService
+		id="deleteGameToUserService"
+		url="http://localhost:3000/games/deleteGameToUser"
+		method="POST"
+		contentType="application/xml"
+		result="deleteGameToUserHandle(event)"
+		resultFormat="e4x">
+		<mx:request>
+		<game>
+			<name>{gameName.toString()}</name>
+			<!--<image>{gameImage.toString()}</image>-->
+			<userid>{user.id.toString()}</userid>
+		</game>
+		</mx:request>
+	</mx:HTTPService>
+		
+    
+    
+	<mx:Accordion width="100%" change="gameListService.send();getUserGamesService.send();">
+		<mx:HBox label="Tus juegos" width="100%" height="100%" paddingBottom="10" paddingLeft="10" paddingTop="10" paddingRight="10">
+		<!--<mx:Button click="getUserGamesService.send();" label="Cargar juegos"/>-->
+			<mx:DataGrid id="projectsGrid" width="100%" height="100%" borderStyle="solid"
+				dataProvider="{getUserGamesService.lastResult.games.game}" itemClick="handlerJuegoSeleccionado();">
+				<mx:columns>
+					<mx:DataGridColumn dataField="name" headerText="Juego">
+						<mx:itemRenderer>
+							<mx:Component>
+								<mx:VBox paddingTop="23" paddingLeft="25">
+									<mx:Label text="{data.name}" fontFamily="Helvetica" fontSize="14" fontWeight="bold"/>
+								</mx:VBox>
+							</mx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+					<mx:DataGridColumn dataField="image" headerText="Imagen" width="64">
+						<mx:itemRenderer>
+							<mx:Component>
+								<mx:VBox>
+        							<mx:Image source="{data.image}" width="64" height="64" horizontalAlign="center"/>
+        						</mx:VBox>
+							</mx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+				</mx:columns>
+			</mx:DataGrid>
+			<mx:Spacer height="10"/>
+			<mx:VBox width="100%" height="100%">
+				<mx:DataGrid id="usersGrid" width="100%" height="100%" borderStyle="solid"
+					dataProvider="{getPlayersService.lastResult.users.user}" 
+					change="usuarioSeleccionado=usersGrid.selectedItem.login;hayJugadorSeleccionado=true;">
+					<mx:columns>
+						<mx:DataGridColumn dataField="login" headerText="Otros jugadores de este juego"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<mx:Panel title="Detalles del jugador seleccionado" paddingLeft="20" paddingRight="20" width="50%" height="100%">
+					<mx:Image horizontalCenter="true" visible="{hayJugadorSeleccionado}" verticalCenter="true" scaleContent="false" autoLoad="true" width="400" height="176"  source="{'http://card.mygamercard.net/ES/crest/' + usuarioSeleccionado + '.png'}"/>
+				</mx:Panel>
+			</mx:VBox>			
+		</mx:HBox>
+		<mx:VBox label="Modificar mi colección" width="100%" height="70%">
+			<mx:Label text="Desde aquí podrás modificar tu colección de juegos arrastrándolos de un lado a otro."/>
+			<mx:HBox width="100%">
+				<mx:Label width="50%" height="5%" text='Lista de juegos:'/>
+				<mx:Label width="50%" height="5%" text='Tu colección:'/>
+			</mx:HBox>
+			<mx:HBox width="100%" height="70%">
+				<mx:TileList id="listaJuegos" width="100%" height="100%" dragEnabled="true" dragMoveEnabled="true"
+					dragDrop="eliminarJuegoEnColeccion(event);"
+    	    		dataProvider="{gameListService.lastResult.games.game}" itemRenderer="com.xbox.components.GameThumbnail"
+    	    		dropEnabled="true"/>
+	        	<mx:TileList id="juegosNuevosColeccion" width="100%" height="100%" dragEnabled="true" dragMoveEnabled="true" 
+	        		dragDrop="nuevoJuegoEnColeccion(event);"
+	        		dataProvider="{getUserGamesService.lastResult.games.game}"
+	        		itemRenderer="com.xbox.components.GameThumbnail" dropEnabled="true">
+     		   	</mx:TileList>
+			</mx:HBox>
+			<!--<mx:Button click="addGamesToUser();" label="Añadir juegos"/>-->
+			<mx:Label text="Si tus juegos no aparecen en nuestra lista, puedes añadirlos desde aquí." />
+   		 	<mx:HBox width="100%" horizontalAlign="center" height="25%">
+    			<mx:Form labelWidth="150">
+					<mx:FormItem required="true" label="Nombre del juego">
+						<mx:TextInput id="nameTI"/>
+					</mx:FormItem>
+					<mx:FormItem required="true" label="Imagen">
+						<mx:TextInput id="imageTI"/>
+					</mx:FormItem>
+					<mx:FormItem>
+						<mx:Button id="addGameButton" label="Añadir juego" enabled="true" click="addGame()"/>
+					</mx:FormItem>
+				</mx:Form>
+    		</mx:HBox>	
+		</mx:VBox>
+	</mx:Accordion>
+	
+	<!--
+	<mx:Panel id="summaryPanel"
+		title="Project" width="100%" height="40%"
+		paddingLeft="5" paddingRight="5" paddingTop="5"
+		paddingBottom="5">
+		<mx:HBox width="100%">
+			<mx:Label text="Name" width="50"/>
+			<mx:TextInput id="nameTI" width="100%"/>
+		</mx:HBox>
+		<mx:HBox width="100%" height="100%">
+			<mx:Label text="Notes" width="50"/>
+			<mx:TextArea id="notesTI" width="100%" height="100%"/>
+		</mx:HBox>
+		<mx:ControlBar width="100%" horizontalAlign="center">
+			<mx:Button id="updateButton" label="Update"
+				width="100%" height="30"/>
+			<mx:Button id="deleteButton" label="Delete"
+				height="30"/>
+		</mx:ControlBar>
+	</mx:Panel>
+	-->
+</mx:VDividedBox>

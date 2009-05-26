@@ -1,0 +1,77 @@
+9
+
+dir
+4
+https://xboxapp.googlecode.com/svn/trunk/test
+https://xboxapp.googlecode.com/svn
+
+
+
+2009-05-05T17:19:42.830775Z
+4
+joaquin.navarro.s
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+4a0bca6a-342f-11de-8a2e-13aa1706fec1
+
+unit
+dir
+
+test_helper.rb
+file
+
+
+
+
+2009-05-05T17:21:00.000000Z
+418de3a6e564ab5a428c796630c4a17f
+2009-05-05T17:19:42.830775Z
+4
+joaquin.navarro.s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1834
+
+performance
+dir
+
+functional
+dir
+
+integration
+dir
+
+fixtures
+dir
+

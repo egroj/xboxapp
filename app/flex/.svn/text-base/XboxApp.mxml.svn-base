@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:xbox="com.xbox.components.*"
+	layout="vertical"
+	backgroundGradientColors="[#ffffff, #c0c0c0]"
+	horizontalAlign="center"
+	verticalAlign="top"
+	paddingLeft="0"
+	paddingRight="0"
+	paddingTop="0"
+	paddingBottom="0"
+	width="100%"
+	height="100%">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.xbox.components.DebugPanel;
+			import com.xbox.events.AccountCreateEvent;
+			import com.xbox.events.LoginEvent;
+			import com.xbox.util.DebugMessage;
+			
+			[Bindable]
+			private var _user : XML;
+			
+			public static function debug(str:String):void {
+				application.debugPanel.addMessage(new DebugMessage(str));
+			}
+			
+			private function handleAccountCreate(e:AccountCreateEvent):void {
+				login(e.user);
+			}
+			private function handleLogin(e:LoginEvent):void {
+				login(e.user);
+			}
+			private function login(user:XML):void {
+				_user = user;
+				debug("user = " + user);
+				mainStack.selectedChild = mainBox;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:VDividedBox width="100%" height="100%">
+		<mx:ViewStack id="mainStack" width="100%" height="100%">
+			<xbox:SplashBox id="splashBox" accountCreate="handleAccountCreate(event)"
+					login="handleLogin(event)"/>
+			<xbox:MainBox id="mainBox" user="{_user}"/>
+		</mx:ViewStack>
+		<xbox:DebugPanel id="debugPanel" width="100%" height="0%"/>
+	</mx:VDividedBox>
+	
+</mx:Application>

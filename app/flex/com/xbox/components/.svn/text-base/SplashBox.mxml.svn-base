@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:xbox="com.xbox.components.*"
+	horizontalAlign="center" verticalAlign="top"
+	width="100%" height="100%">
+
+	<mx:Metadata>
+		[Event(name="accountCreate",
+		type="com.xbox.events.AccountCreateEvent")]
+		[Event(name="login", type="com.xbox.events.LoginEvent")]
+	</mx:Metadata>
+	
+		<mx:Script>
+		<![CDATA[
+			import com.xbox.events.AccountCreateEvent;
+			import com.xbox.events.LoginEvent;
+			
+			[Bindable]
+			private var _reviews:String =
+				'"La mejor Web para encontrar jugadores con tu mismo horario"' +
+				' --Meristation*\n' +
+				'"Si quieres encontrar a alguien para jugar, este es tu sitio"' +
+				' --TodoXbox360*\n';
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="500" horizontalAlign="center">
+		<mx:Image source="com/xbox/assets/xbox-live.png" />
+		<mx:Label text="Bienvenido a tu comunidad de jugadores de Xbox Live."/>
+		<mx:Spacer height="10"/>
+		<mx:Text width="100%" text="{_reviews}"/>
+		<mx:Spacer height="10"/>
+		<mx:Accordion width="400" height="300">
+			<xbox:LoginBox/>
+			<xbox:AccountCreateBox/>
+		</mx:Accordion>
+		<mx:Label text="*todavía no lo han dicho, pero lo harán!"/>
+	</mx:VBox>
+</mx:VBox>

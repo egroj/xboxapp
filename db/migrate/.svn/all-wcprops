@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/4/trunk/db/migrate
+END
+20090505124811_create_messages.rb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/4/trunk/db/migrate/20090505124811_create_messages.rb
+END
+20090520084946_add_games.rb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/8/trunk/db/migrate/20090520084946_add_games.rb
+END
+20090421184757_create_users.rb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/4/trunk/db/migrate/20090421184757_create_users.rb
+END
+20090504221938_create_games.rb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/4/trunk/db/migrate/20090504221938_create_games.rb
+END
+20090520092656_add_messages.rb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/8/trunk/db/migrate/20090520092656_add_messages.rb
+END
+20090524094848_create_games_users_join_table.rb
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/14/trunk/db/migrate/20090524094848_create_games_users_join_table.rb
+END

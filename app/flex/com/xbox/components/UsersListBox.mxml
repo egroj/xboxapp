@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+        width="100%" height="100%" label="Usuarios" addedToStage="updater()">
+
+        
+        <mx:Script>
+                <![CDATA[
+                        import mx.rpc.events.ResultEvent;
+                        import flash.utils.Timer;
+                        import flash.events.TimerEvent;
+                        import mx.controls.Alert;
+                        
+                        [Bindable]public var user : XML;
+                        
+                        public function updater():void{
+                                var temporizador:Timer = new Timer(2000,100000);
+                                temporizador.addEventListener(TimerEvent.TIMER,f);
+                                temporizador.start();
+                        }
+                        
+                        public function f(event:TimerEvent):void{
+                                usersListService.send();
+                                usersOnlineService.send();
+                        }
+
+                ]]>
+        </mx:Script>
+                
+        
+        <mx:HTTPService id="usersOnlineService"
+        url='http://localhost:3000/users/getOnline/{user.id}.xml'/>
+        
+        <mx:HTTPService id="usersListService"
+        url='http://localhost:3000/users/getUsers/{user.id}.xml'/>
+        
+        
+        <mx:Accordion width="100%" height="100%">
+                <mx:Box width="100%" height="50%" minHeight="400" maxHeight="600" label="Usuarios Online" >
+                        <mx:DataGrid id="usersGrid" dataProvider="{usersOnlineService.lastResult.users.user}" width="100%" height="100%">
+                                <mx:columns>
+                                        <mx:DataGridColumn dataField="login" headerText="Usuario" width="150"/>
+                                        <mx:DataGridColumn dataField="email" headerText="Email" width="150"/>
+                                </mx:columns>
+                        </mx:DataGrid>
+                </mx:Box>
+                <mx:Box width="100%" height="50%" minHeight="400" label="Todos" >
+                        <mx:DataGrid id="usersGrid2" dataProvider="{usersListService.lastResult.users.user}" width="100%" height="100%">
+                                <mx:columns>
+                                        <mx:DataGridColumn dataField="login" headerText="Usuario" width="150"/>
+                                        <mx:DataGridColumn dataField="email" headerText="Email" width="150"/>
+                                </mx:columns>
+                        </mx:DataGrid>
+                </mx:Box>
+        </mx:Accordion>
+
+</mx:Canvas>

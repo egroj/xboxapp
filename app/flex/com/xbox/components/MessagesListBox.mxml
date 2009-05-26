@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%" height="100%" label="Mensajes" addedToStage="messageListService.send()">
+
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.rpc.events.ResultEvent;
+			
+			private function sendMessage():void{
+				if(autorM.text == loginM.text){
+					Alert.show("Te vas a mandar un mensaje a ti mismo. Mejor búsca amigos :D");
+				} else{
+					svcNewMessage.send();
+				}
+			}
+			
+			private function handleNewMessageResult(event:ResultEvent):void {
+				var result:Object = event.result;
+				if (result == "error") {
+					Alert.show("Error al enviar el mensaje.", "Error");
+				} else {
+					Alert.show("Mensaje enviado correctamente", "OK");
+				}
+			}
+            
+            private function date_dataLabelFunc(item:Object, column:DataGridColumn):String {
+				var fechaString:String = item.updated_at;
+				return (fechaString.replace("T"," ").replace("Z", ""));
+            }
+
+		
+			[Bindable]public var user : XML;
+
+		]]>
+	</mx:Script>
+	
+		<mx:HTTPService
+		id="svcNewMessage"
+		url="http://localhost:3000/messages/sendMessage"
+		contentType="application/xml"
+		resultFormat="e4x"
+		result="handleNewMessageResult(event)">
+		<mx:request>
+		<message>
+			<login>{loginM.text}</login>
+			<autor>{autorM.text}</autor>
+			<topic>{topicM.text}</topic>
+			<text>{textM.text}</text>
+		</message>
+		</mx:request>
+	</mx:HTTPService>
+	
+	<mx:HTTPService id="messageListService"
+	url='http://localhost:3000/messages/getMessages/{user.id}.xml'/>
+	
+	<mx:HTTPService id="deleteMessageService"
+	url='http://localhost:3000/messages/borrarMensaje/{messageGrid.selectedItem.id}.xml'/>
+	
+	<mx:DateFormatter id="dateFormatter" formatString="day: DD, month: MM, year: YYYY"/>
+
+	<mx:Accordion width="100%" height="100%">
+	<mx:VBox width="100%" height="100%" label="Mensajes recibidos" >
+	<mx:VBox width="100%" height="40%" paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+		<mx:Button label="Comprobar nuevos mensajes" click="messageListService.send();"/>
+		<mx:HBox width="100%" paddingLeft="5" paddingRight="5">
+		
+			<!--<mx:ComboBox id="subChoiceCB" width="100%" dataProvider="{_subChoices}"
+				visible="{mainChoiceCB.selectedItem.hasSubChoice}"/>-->
+		</mx:HBox>
+		<mx:DataGrid id="messageGrid" dataProvider="{messageListService.lastResult.messages.message}" width="100%" height="100%">
+			<mx:columns>
+				<mx:DataGridColumn dataField="autor" headerText="De" width="250"/>
+				<mx:DataGridColumn dataField="topic" headerText="Asunto" width="150"/>
+				<mx:DataGridColumn dataField="text" headerText="Texto" width="350"/>
+				<mx:DataGridColumn id="fecha" labelFunction="date_dataLabelFunc" dataField="updated_at" headerText="Fecha"/>
+			</mx:columns>
+		</mx:DataGrid>
+	</mx:VBox>
+	
+	<mx:Panel id="summaryPanel" title="Mensaje seleccionado:" width="100%"
+			height="60%" paddingLeft="5" paddingRight="5"
+			paddingTop="5" paddingBottom="5">
+			<mx:HBox width="100%" height="100%">
+				<mx:VBox width="100%" height="100%">
+					<mx:HBox width="100%">
+						<mx:Label text="De" width="50"/>
+						<mx:Label id="detalle_de" width="100%" text="{messageGrid.selectedItem.autor}"/>
+					</mx:HBox>
+					<mx:HBox width="100%">
+						<mx:Label text="Asunto" width="50"/>
+						<mx:Label id="detalle_asunto" width="100%" text="{messageGrid.selectedItem.topic}"/>
+					</mx:HBox>
+					<mx:HBox width="100%">
+						<mx:Label text="Fecha" width="50"/>
+						<mx:Label id="detalle_fecha" width="100%" text="{messageGrid.selectedItem.updated_at.text}"/>
+					</mx:HBox>
+					<mx:HBox width="100%" height="100%">
+						<mx:Label text="Texto" width="50"/>
+						<mx:TextArea editable="false" id="detalle_texto" text="{messageGrid.selectedItem.text}" width="100%" height="100%"/>
+					</mx:HBox>
+				</mx:VBox>
+				<mx:ControlBar width="10%" verticalAlign="middle" height="100%" horizontalAlign="center">
+					<mx:Button id="botonBorrar" label="Borrar" height="30" click="deleteMessageService.send();messageListService.send();"/>
+				</mx:ControlBar>
+			</mx:HBox>
+			
+	</mx:Panel>
+		</mx:VBox>
+		
+	<mx:VBox width="100%" height="100%" label="Enviar Mensaje" >
+	
+	
+	
+	<!--<mx:Label id="aux" text="{user.login}" />-->
+	<mx:Form labelWidth="70" width="100%" height="100%">
+		<mx:FormItem visible="false">
+			<mx:Text id="autorM" text="{user.login}" />
+		</mx:FormItem>
+		<mx:FormItem required="true" label="Tema" width="100%">
+			<mx:TextInput id="topicM" width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem required="true" label="Receptor" width="100%">
+			<mx:TextInput id="loginM" width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem label="Texto" width="100%">
+			<mx:TextArea id="textM" width="100%" height="119"/>
+		</mx:FormItem>
+		<mx:FormItem>
+			<mx:Button id="newMessageButton" label="Enviar mensaje"
+				click="sendMessage();"/>
+		</mx:FormItem>
+	</mx:Form>
+	
+	</mx:VBox>
+	</mx:Accordion>
+
+</mx:VDividedBox>

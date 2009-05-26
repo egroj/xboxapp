@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" 
+	height="100%" label="Login" verticalAlign="middle">
+	
+	<mx:Metadata>
+		[Event(name="login", type="com.xbox.events.LoginEvent")]
+	</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+		
+			import mx.events.ValidationResultEvent;
+			
+			public var userOk:Boolean;
+			public var passOk:Boolean;
+            
+            // Event listener for the valid and invalid events.
+            private function handleUserValid(eventObj:ValidationResultEvent):void {
+                if(eventObj.type==ValidationResultEvent.VALID){   
+                    //Usuario no vacío
+                    userOk = true;
+                    if(camposOk()==true){
+                    	loginButton.enabled = true;
+                    }
+                }else{
+                    userOk = false;
+                    loginButton.enabled = false;
+                }
+            }
+            
+            private function handlePasswordValid(eventObj:ValidationResultEvent):void {
+                if(eventObj.type==ValidationResultEvent.VALID){
+                	//Password no vacía
+                	passOk = true;
+                    if(camposOk()){
+                    	loginButton.enabled = true;
+                    }
+                }else {
+                   passOk = false;
+                   loginButton.enabled = false;
+                }
+            }
+            
+            private function camposOk():Boolean{
+            	return (userOk && passOk);
+            }
+	
+			//Gestión del login
+			import mx.controls.Alert;
+			import mx.rpc.events.ResultEvent;
+			import com.xbox.events.LoginEvent;
+			private function login():void {
+				svcAccountLogin.send({login: loginTI.text, password: passwordTI.text});
+			}
+			private function handleAccountLoginResult(
+				event:ResultEvent):void {
+				var result:Object = event.result;
+				if (result == "badlogin") {
+					Alert.show("El gamertag o la contraseña no son válidos.","Error de Login");
+				} else {
+					dispatchEvent(new LoginEvent(XML(result)));
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<mx:HTTPService
+		id="svcAccountLogin"
+		url="/session.xml"
+		resultFormat="e4x"
+		method="POST"
+		result="handleAccountLoginResult(event)"/>
+		
+	<!-- The Validator class defines the required property and the validator events
+         used by all validator subclasses. -->
+    <mx:Validator id="validadorUser" required="true"
+        source="{loginTI}" property="text"
+        requiredFieldError="El gamertag es necesario"
+        valid="handleUserValid(event)" invalid="handleUserValid(event)" />
+        
+    <mx:Validator id="validadorPassworld" required="true"
+        source="{passwordTI}" property="text"
+        requiredFieldError="La password es necesaria"
+        valid="handlePasswordValid(event)" invalid="handlePasswordValid(event)" />
+	
+	<mx:Form labelWidth="150">
+		<mx:FormItem required="true" label="Gamertag">
+			<mx:TextInput id="loginTI"/>
+		</mx:FormItem>
+		<mx:FormItem required="true" label="Password">
+			<mx:TextInput id="passwordTI" displayAsPassword="true"/>
+		</mx:FormItem>
+		<mx:FormItem>
+			<mx:Button id="loginButton" label="Login" enabled="false" click="login()"/>
+		</mx:FormItem>
+	</mx:Form>
+	
+</mx:VBox>
